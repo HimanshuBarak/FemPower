@@ -17,7 +17,17 @@ const modelData = fs.readFileSync(modelPath);
 const model = new tangram.Model(modelData.buffer);
 
 
-
+mongoose.connect(
+    process.env.uri,
+    {
+      useNewUrlParser: true,
+      useUnifiedTopology: true,
+    },
+    (err) => {
+      if (err) return console.error(err);
+      console.log("Connected to MongoDB");
+    }
+  );
 
 
 const app = express();
@@ -37,7 +47,7 @@ app.use(cookieParser());
 
 
 
-//app.use("/patients",require("./routes/patient"))
+app.use("/patients",require("./routes/patient"))
 
 
 
