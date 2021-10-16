@@ -101,7 +101,7 @@ function Model() {
 			</div>
 
 			<div className="phase-symptoms mt-4">
-				<Card style={{ borderRadius: "10px" }}>
+				<Card style={{ borderRadius: "10px" }} classNmae="card">
 					<CardContent>
 						<Typography
 							sx={{ fontSize: 14 }}
