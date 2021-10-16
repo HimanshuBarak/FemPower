@@ -17,6 +17,7 @@ const modelData = fs.readFileSync(modelPath);
 const model = new tangram.Model(modelData.buffer);
 
 
+//connecting to mongodb
 mongoose.connect(
     process.env.uri,
     {
@@ -28,6 +29,7 @@ mongoose.connect(
       console.log("Connected to MongoDB");
     }
   );
+
 
 
 const app = express();
@@ -51,16 +53,103 @@ app.use("/patients",require("./routes/patient"))
 
 
 
+const postPatientApi = "https://fhir.a4bb78it5rl2.static-test-account.isccloud.io/Observation";
+const getPatientApi = "https://fhir.a4bb78it5rl2.static-test-account.isccloud.io/Observation?identifier=mithack21";
 
 
 
+//FHIR json Observarion format
+let obj = {
+    resourceType: "Observation",
+    id: "mithack_21",
+    text: {
+        status: "generated",
+        div: "<div xmlns=\"http://www.w3.org/1999/xhtml\"><p><b>Generated Narrative with Details</b></p><p><b>id</b>: date-lastmp</p><p><b>status</b>: final</p><p><b>category</b>: AOE <span>(Details : {http://terminology.hl7.org/CodeSystem/observation-category code 'survey' = 'Survey', given as 'Survey'})</span></p><p><b>code</b>: Date last menstrual period <span>(Details : {LOINC code '8665-2' = 'Last menstrual period start date', given as 'Date last menstrual period'})</span></p><p><b>subject</b>: <a>Patient/pat2</a></p><p><b>effective</b>: 24/01/2016</p><p><b>value</b>: 30/12/2016</p></div>"
+    },
+    status: "final",
+    category: [
+        {
+        coding: [
+            {
+            system: "http://terminology.hl7.org/CodeSystem/observation-category",
+            code: "survey",
+            display: "Survey"
+            }
+        ],
+        text: "AOE"
+        }
+    ],
+    code: {
+        coding: [
+        {
+            system: "http://loinc.org",
+            code: "8665-2",
+            display: "Date last menstrual period"
+        }
+        ],
+        text: "Date last menstrual period"
+    },
+    subject: {
+        reference: "Patient/pat2"
+    },
+    effectiveDateTime: "2016-01-24",
+    valueDateTime: "2016-12-30",
+    meta: {
+        tag: [
+        {
+            system: "http://terminology.hl7.org/CodeSystem/v3-ActReason",
+            code: "HTEST",
+            display: "test health data"
+        }
+        ]
+    },
+    identifier: [ 
+        {
+            value: "hackharvard21"
+        }
+    ]
+}
 
+//working API
+app.post("/postPatient", async (req, res) => {
+    const headers = {
+        "x-api-key": "srOd0BhfKd5k7z5Dy1SUWaQpWfOg1ycH7ShG5R6D"
+    }
+    //Appending the user's first date of last menstrual period to FHIR body 
+    const offset = new Date(req.body.lastPeriodDate).getTimezoneOffset();
+    let mydate = new Date(req.body.lastPeriodDate).getTime()-(offset*60*1000);
 
+    //Reformat date YYYY-MM-DD
+    obj.code.coding[0].display = new Date(mydate).toISOString().split('T')[0];
+    obj.code.text = new Date(); //req.body.todayDate;
+    obj.meta.tag[0].display = req.body.phaseResult;
+    
+    const response = await axios.post(postPatientApi,obj, {
+        headers
+    })
+    res.json(response.status);
+});
 
-   
+//get research data
+app.get("/getPatientForResearch", async (req, res) => {
+    const headers = {
+        "x-api-key": "srOd0BhfKd5k7z5Dy1SUWaQpWfOg1ycH7ShG5R6D"
+    }
+    const response = await axios.get(getPatientApi, {headers});
+    
+    console.log(JSON.stringify(response.data));
 
+    const hackmitPatients = response.data;
+    
+    // .filter((patient) => {
+    //     //console.log(JSON.stringify(patient))
+    //     if(isNaN(patient.resource.id)){
+    //         console.log(patient.resource);
+    //     }
+    //     return patient.resource.id == menstrual_id});
 
-
+    res.json(hackmitPatients);
+});
 
 //To test this API, try sending this obj as a body. Tweak the day param to get different results
 const testBody = {
@@ -229,7 +318,7 @@ app.post("/getPredictionResult", (req, res) => {
 
 // simple route
 app.get("/", (req, res) => {
-  res.json({ message: "Welcome to our hackharvard application." });
+  res.json({ message: "Welcome to mithack application." });
 
 });
 
