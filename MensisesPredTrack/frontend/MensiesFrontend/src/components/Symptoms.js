@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useContext } from "react";
 import "./symptoms.css";
 import axios from "axios";
-
+import PhaseContext from "../context/PhaseContext";
 
 import light_flow from "../assets/images/light_flow.svg";
 import heavy_flow from "../assets/images/heavy_flow.svg";
@@ -22,7 +22,8 @@ function Symptoms() {
 	const [lengthCycle, setlengthCycle] = useState(0);
 	const [lastPeriodDate, setlastPeriodDate] = useState(new Date());
 
-	
+	const { phase, setphase, day, setday, flowContext, setflowContext } =
+		useContext(PhaseContext);
 
 	const monthNames = [
 		"Jan",
@@ -47,7 +48,46 @@ function Symptoms() {
     console.log(lastPeriodDate)
 */
 
+	let resp = {};
+	//posting patient data
+	async function submit() {
+		try {
+			const input = new Date(lastPeriodDate);
+			setday(input.getUTCDate());
+			let symptoms = {
+				flow,
+				lengthCycle,
+				lastPeriodDate: lastPeriodDate,
+			};
+			console.log(symptoms);
 
+			resp = await axios.post(
+				"http://localhost:8080/getPredictionResult",
+				symptoms
+			);
+		} catch (err) {
+			alert(err);
+		}
+		setphase(resp.data.message);
+		setflowContext(flow);
+	}
+
+	async function postpatient() {
+		try {
+			if (phase) {
+				let patient = {
+					flow,
+					mood,
+					pain,
+					totalDays: lengthCycle,
+					lastPeriod: lastPeriodDate,
+					phase,
+				};
+
+				await axios.post("http://localhost:8080/patients/add", patient);
+			}
+		} catch (err) {}
+	}
 	return (
 		<div className="symptoms">
 			<div className="row heading ">
@@ -252,19 +292,22 @@ function Symptoms() {
 				/>
 			</div>
 			<div className="buttons">
-				<button  className="btn_submit grow">
+				<button onClick={submit} className="btn_submit grow">
 					Submit
 				</button>
-				<button  className="btn_post grow">
+				<button onClick={postpatient} className="btn_post grow">
 					Post Data
 				</button>
-				<button  className="btn_submit grow">
+				<button onClick={postpatient} className="btn_submit grow">
 					Get Medicine
 				</button>
 
 				<button
 					type="button"
-					
+					onClick={(e) => {
+						e.preventDefault();
+						window.location.href = `http://127.0.0.1:8002/${phase}/`;
+					}}
 					className="btn_post grow"
 				>
 					Get Diet
@@ -274,4 +317,4 @@ function Symptoms() {
 	);
 }
 
-export default Symptoms
+export default Symptoms;

@@ -5,7 +5,7 @@ const PhaseContext = createContext();
 function PhaseContextProvider(props) {
 	const [phase, setphase] = useState(undefined);
 	const [day, setday] = useState(0);
-	
+	const [flowContext, setflowContext] = useState("");
 
 	return (
 		<PhaseContext.Provider
@@ -14,7 +14,8 @@ function PhaseContextProvider(props) {
 				setphase,
 				day,
 				setday,
-				
+				flowContext,
+				setflowContext,
 			}}
 		>
 			{props.children}
