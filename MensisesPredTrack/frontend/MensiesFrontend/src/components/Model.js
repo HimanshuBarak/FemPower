@@ -1,7 +1,7 @@
 import React, { useContext, useEffect } from "react";
 import "./model.css";
 import { Bar } from "react-chartjs-2";
-
+import PhaseContext from "../context/PhaseContext";
 import Card from "@mui/material/Card";
 import CardActions from "@mui/material/CardActions";
 import CardContent from "@mui/material/CardContent";
@@ -9,14 +9,17 @@ import Button from "@mui/material/Button";
 import Typography from "@mui/material/Typography";
 
 function Model() {
-	
+	const { phase, setphase, day, setday, flowContext, setflowContext } =
+		useContext(PhaseContext);
 	const data = {
 		labels: ["menstrual", "follicular", "ovulation", "luteral"],
 		datasets: [
 			{
 				label: "# of days",
 				data: [
-					 Math.floor(Math.random() * (6 - 3) + 3),
+					flowContext == "medium" || flowContext == "heavy"
+						? Math.floor(Math.random() * (11 - 7) + 7)
+						: Math.floor(Math.random() * (6 - 3) + 3),
 					Math.floor(Math.random() * (9 - 6) + 6),
 					1,
 					Math.floor(Math.random() * (14 - 10) + 10),
@@ -88,7 +91,7 @@ function Model() {
 		},
 	};
 
-
+	useEffect(() => {}, [phase]);
 
 	return (
 		<div className="model-container">
@@ -96,23 +99,237 @@ function Model() {
 			<div className="phase-text mt-3">
 				<h5>
 					{" "}
-					
+					{phase
+						? `You are currently in ${phase} phase.`
+						: `Press Submit to View your current Phase`}{" "}
 				</h5>
 			</div>
 
 			<div className="phase-symptoms mt-4">
-				<Card style={{ borderRadius: "10px" }} classNmae="card">
+				<Card
+					style={{ borderRadius: "10px", backgroundColor: "#feda9c" }}
+				>
 					<CardContent>
-						<Typography
-							sx={{ fontSize: 14 }}
-							color="text.secondary"
-							gutterBottom
-						>
-							<h4>Common Symptoms :</h4>
-						</Typography>
-						<Typography variant="h5" component="div">
-							<p>Yet to be added and font also need fixing</p>
-						</Typography>
+						{phase == "menstrual" && (
+							<>
+								<div className="col-lg-8 title-text2">
+									<h2>Common Symptoms:</h2>
+								</div>
+								<div className="row">
+									<div className="col-lg-4 title-text1">
+										<h2 className="title-text3">
+											<b className="title-text2">•</b>
+											<b className="title-text3">
+												&nbsp;Extreme Cramps
+											</b>
+										</h2>
+										<h2 className="title-text3">
+											<b className="title-text2">•</b>
+											<b className="title-text3">
+												&nbsp;Tender Breasts
+											</b>
+										</h2>
+									</div>
+									<div className="col-lg-4 title-text1">
+										<h2 className="title-text3">
+											<b className="title-text2">•</b>
+											<b className="title-text3">
+												&nbsp;Extreme Bloating
+											</b>
+										</h2>
+										<h2 className="title-text3">
+											<b className="title-text2">•</b>
+											<b className="title-text3">
+												&nbsp;Mood Swings
+											</b>
+										</h2>
+									</div>
+									<div className="col-lg-4 title-text1">
+										<h2 className="title-text3">
+											<b className="title-text2">•</b>
+											<b className="title-text3">
+												&nbsp;Feverent Irritability
+											</b>
+										</h2>
+										<h2 className="title-text3">
+											<b className="title-text2">•</b>
+											<b className="title-text3">
+												&nbsp;Nausea & Headaches
+											</b>
+										</h2>
+									</div>
+								</div>
+							</>
+						)}
+						{phase == "luteal" && (
+							<>
+								<div className="col-lg-8 title-text2">
+									<h2>Common Symptoms:</h2>
+								</div>
+								<div className="row">
+									<div className="col-lg-4 title-text1">
+										<h2 className="title-text3">
+											<b className="title-text2">•</b>
+											<b className="title-text3">
+												&nbsp;Mood Changes
+											</b>
+										</h2>
+										<h2 className="title-text3">
+											<b className="title-text2">•</b>
+											<b className="title-text3">
+												&nbsp;Frequent Headaches
+											</b>
+										</h2>
+									</div>
+									<div className="col-lg-4 title-text1">
+										<h2 className="title-text3">
+											<b className="title-text2">•</b>
+											<b className="title-text3">
+												&nbsp;Weight Gain
+											</b>
+										</h2>
+										<h2 className="title-text3">
+											<b className="title-text2">•</b>
+											<b className="title-text3">
+												&nbsp;Changes in Desire.
+											</b>
+										</h2>
+									</div>
+									<div className="col-lg-4 title-text1">
+										<h2 className="title-text3">
+											<b className="title-text2">•</b>
+											<b className="title-text3">
+												&nbsp;Food Cravings
+											</b>
+										</h2>
+										<h2 className="title-text3">
+											<b className="title-text2">•</b>
+											<b className="title-text3">
+												&nbsp;Trouble Sleeping
+											</b>
+										</h2>
+									</div>
+								</div>
+							</>
+						)}
+						{phase == "ovulation" && (
+							<>
+								<div className="col-lg-8 title-text2">
+									<h2>Common Symptoms:</h2>
+								</div>
+								<div className="row">
+									<div className="col-lg-4 title-text1">
+										<h2 className="title-text3">
+											<b className="title-text2">•</b>
+											<b className="title-text3">
+												&nbsp;Rise in Temperature
+											</b>
+										</h2>
+										<h2 className="title-text3">
+											<b className="title-text2">•</b>
+											<b className="title-text3">
+												&nbsp;Thicker Discharge
+											</b>
+										</h2>
+									</div>
+									<div className="col-lg-4 title-text1">
+										<h2 className="title-text3">
+											<b className="title-text2">•</b>
+											<b className="title-text3">
+												&nbsp;Extreme Ov-Pain
+											</b>
+										</h2>
+										<h2 className="title-text3">
+											<b className="title-text2">•</b>
+											<b className="title-text3">
+												&nbsp;Fertile Mucus
+											</b>
+										</h2>
+									</div>
+									<div className="col-lg-4 title-text1">
+										<h2 className="title-text3">
+											<b className="title-text2">•</b>
+											<b className="title-text3">
+												&nbsp;Fertile Saliva
+											</b>
+										</h2>
+										<h2 className="title-text3">
+											<b className="title-text2">•</b>
+											<b className="title-text3">
+												&nbsp;Breast Tenderness
+											</b>
+										</h2>
+									</div>
+								</div>
+							</>
+						)}
+						{phase == "follicular" && (
+							<>
+								<div className="col-lg-8 title-text2">
+									<h2>Common Symptoms:</h2>
+								</div>
+								<div className="row">
+									<div className="col-lg-4 title-text1">
+										<h2 className="title-text3">
+											<b className="title-text2">•</b>
+											<b className="title-text3">
+												&nbsp;Higher Energy
+											</b>
+										</h2>
+										<h2 className="title-text3">
+											<b className="title-text2">•</b>
+											<b className="title-text3">
+												&nbsp;Glowing Skin
+											</b>
+										</h2>
+									</div>
+									<div className="col-lg-4 title-text1">
+										<h2 className="title-text3">
+											<b className="title-text2">•</b>
+											<b className="title-text3">
+												&nbsp;Extremely Optimistic
+											</b>
+										</h2>
+										<h2 className="title-text3">
+											<b className="title-text2">•</b>
+											<b className="title-text3">
+												&nbsp;More Socializing
+											</b>
+										</h2>
+									</div>
+									<div className="col-lg-4 title-text1">
+										<h2 className="title-text3">
+											<b className="title-text2">•</b>
+											<b className="title-text3">
+												&nbsp;Can Exercise
+											</b>
+										</h2>
+										<h2 className="title-text3">
+											<b className="title-text2">•</b>
+											<b className="title-text3">
+												&nbsp;Explore Horizons
+											</b>
+										</h2>
+									</div>
+								</div>
+							</>
+						)}
+						{!phase && (
+							<>
+								<div className="col-lg-8 title-text2">
+									<h2>Common Symptoms:</h2>
+								</div>
+
+								<div className="col-lg-12 title-text1">
+									<h2>
+										<b>
+											Press Submit to View the common
+											symptoms in your current phase
+										</b>
+									</h2>
+								</div>
+							</>
+						)}
 					</CardContent>
 				</Card>
 			</div>
